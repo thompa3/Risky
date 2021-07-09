@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content=
+        "width=device-width, initial-scale=1.0">
+    <title>Dice Game</title>
+
+    <style>
+      .container {
+          width: 100%;
+          margin: auto;
+          text-align: center;
+      }
+
+      .dice {
+          text-align: center;
+          display: inline-block;
+          margin: 10px;
+      }
+
+      body {
+          background-color: #042f4b;
+          margin: 0;
+          text-align: center;
+      }
+
+      h1 {
+          margin: 30px;
+          font-family: "Lobster", cursive;
+          text-shadow: 5px 0 #232931;
+          font-size: 50px;
+          color: #4ecca3;
+          text-align: center;
+      }
+
+      p {
+          font-size: 2rem;
+          color: #4ecca3;
+          font-family: "Indie Flower", cursive;
+      }
+
+      img {
+          width: 75px;
+          height: 75px;
+      }
+
+      input[type=number] {
+        width: 25%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: boarder-box;
+        color: #4ecca3;
+        font-size: 175%;
+        text-align: right;
+      }
+
+      .loss {
+        color: red;
+      }
+
+      .bottom {
+          padding-top: 30px;
+        }
+
+      .butn {
+          background: #4ecca3;
+          font-family: "Indie Flower", cursive;
+          border-radius: 7px;
+          color: #ffff;
+          font-size: 30px;
+          padding: 16px 25px 16px 25px;
+          text-decoration: none;
+      }
+
+      .butn:hover {
+          background: #232931;
+          text-decoration: none;
+      }
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+
+      /* Modal Content/Box */
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+      }
+
+      /* The Close Button */
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Risky Algorithm</h1>
+    </div>
+
+    <div id="attackerArea" class="container">
+      <div class="dice">
+          <p class="Attackers">Attackers</p>
+          <img class="rd1" src="Images/Dice/RedSide1.png">
+          <img class="rd2" src="Images/Dice/RedSide1.png">
+          <img class="rd3" src="Images/Dice/RedSide1.png">
+      </div>
+    </div>
+
+    <div id="defenderArea" class="container">
+      <div class="dice">
+          <p class="Defenders">Defenders</p>
+          <img class="bd1" src="Images/Dice/BlueSide1.png">
+          <img class="bd2" src="Images/Dice/BlueSide1.png">
+      </div>
+    </div>
+
+    <div id="populateFields" class="container">
+      <div class="dice">
+          <p class="Attackers">Attackers</p>
+          <input type="number" id="inputAttackers" name="Attackers" min="1" max="99">
+      </div>
+
+      <div class="dice">
+          <p class="Defenders">Defenders</p>
+          <input type="number" id="inputDefenders" name="Defenders" min="1" max="99">
+      </div>
+      <div class="dice">
+          <button type="button" class="butn"
+            onclick="submitPopulate()">Submit</button>
+      </div>
+
+    </div>
+
+    <div id="battle" class="container bottom">
+        <button type="button" class="butn"
+            onClick="rollTheDice()">
+            Battle
+        </button>
+        <button type="button" class="butn"
+            onClick="populateArmy()">
+            Redo
+        </button>
+    </div>
+    <div id="populate" class="container bottom">
+        <button type="button" class="butn"
+            onClick="populateArmy()">
+            Populate Armies
+        </button>
+    </div>
+    <div id="restartGame" class="container bottom">
+        <button type="button" class="butn"
+            onClick="restart()">
+            Restart
+        </button>
+        <button id="modalBtn" type="button" class="butn">
+          History
+        </button>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="logModal">test</p>
+      </div>
+
+    </div>
+
+
+    <script>
+      //log stuff
+      // Get the modal
+      var log = "";
+      var modal = document.getElementById("myModal");
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("modalBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+        modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+
+      restartGame.style.display = "none";
+      battle.style.display = "none";
+      populateFields.style.display = "none";
+
+      var attackers = 0
+      var defenders = 0
+      var i = 0
+
+      function animation() {
+        for (let i = 1; i <= 3; i++) {
+          var x = Math.floor(Math.random() * 6) + 1;
+          document.querySelector(".rd" + i).setAttribute("src",
+              "Images/Dice/RedSide" + x + ".png");
+        }
+        for (let i = 1; i <= 2; i++) {
+          var x = Math.floor(Math.random() * 6) + 1;
+          document.querySelector(".bd" + i).setAttribute("src",
+              "Images/Dice/BlueSide" + x + ".png");
+        }
+      }
+
+      function animateDice() {
+        animation();
+        setTimeout(function() {
+          i++;
+          if (i < 10) {
+            animateDice();
+          }
+        }, 100);
+      }
+
+      function refreshDice() {
+        if (attackers == 2) {
+          document.querySelector(".rd3").style.display = "none";
+        }
+        else if (attackers == 1) {
+          document.querySelector(".rd3").style.display = "none";
+          document.querySelector(".rd2").style.display = "none";
+        }
+        else {
+          document.querySelector(".rd3").style.display = "inline";
+          document.querySelector(".rd2").style.display = "inline";
+          document.querySelector(".rd1").style.display = "inline";
+        }
+
+        if (defenders == 1) {
+          document.querySelector(".bd2").style.display = "none";
+        }
+        else {
+          document.querySelector(".bd2").style.display = "inline";
+          document.querySelector(".bd1").style.display = "inline";
+        }
+      }
+
+      function restart() {
+        document.querySelector("p.Attackers")
+                          .innerHTML = "Attackers";
+
+        document.querySelector("p.Defenders")
+                          .innerHTML = "Defenders";
+
+        document.querySelector("h1").innerHTML = "Risky Algorithm"
+
+        restartGame.style.display = "none";
+        battle.style.display = "none";
+        populate.style.display = "block";
+        attackers = 0;
+        defenders = 0;
+        log = "";
+      }
+
+      function populateArmy() {
+        attackerArea.style.display = "none";
+        defenderArea.style.display = "none";
+        battle.style.display = "none";
+        populate.style.display = "none";
+        populateFields.style.display = "block";
+      }
+
+      function submitPopulate() {
+        attackers = document.getElementById("inputAttackers").value;
+        defenders = document.getElementById("inputDefenders").value;
+        document.getElementById("inputAttackers").value = '';
+        document.getElementById("inputDefenders").value = '';
+        document.querySelector("p.Attackers")
+                          .innerHTML = "Attackers: " + attackers;
+
+        document.querySelector("p.Defenders")
+                          .innerHTML = "Defenders: " + defenders;
+
+        attackerArea.style.display = "block";
+        defenderArea.style.display = "block";
+        battle.style.display = "block";
+        populateFields.style.display = "none";
+        refreshDice();
+      }
+
+      function battleRound() {
+        var a = attackers;
+        var d = defenders;
+        attacker = [];
+        defender = [];
+
+        // Roll for attackers
+        if (attackers > 3) {
+          for (let i = 0; i < 3; i++) {
+            attacker.push(Math.floor(Math.random() * 6) + 1);
+          }
+        }
+        else {
+          for (let i = 0; i < attackers; i++) {
+            attacker.push(Math.floor(Math.random() * 6) + 1);
+          }
+        }
+
+        // Roll for Defenders
+        if (defenders > 2) {
+          for (let i = 0; i < 2; i++) {
+            defender.push(Math.floor(Math.random() * 6) + 1);
+          }
+        }
+        else {
+          for (let i = 0; i < defenders; i++) {
+            defender.push(Math.floor(Math.random() * 6) + 1);
+          }
+        }
+
+        // Sort attacker and defender in decending order
+        attacker.sort(function(a, b){return b-a});
+        defender.sort(function(a, b){return b-a});
+
+        // update dice
+        if (attackers > 0) {
+          document.querySelector(".rd1").setAttribute("src",
+              "Images/Dice/RedSide" + attacker[0] + ".png");
+        }
+        if (attackers > 1) {
+        document.querySelector(".rd2").setAttribute("src",
+            "Images/Dice/RedSide" + attacker[1] + ".png");
+        }
+        if (attackers > 2) {
+        document.querySelector(".rd3").setAttribute("src",
+            "Images/Dice/RedSide" + attacker[2] + ".png");
+        }
+
+        if (defenders > 0) {
+        document.querySelector(".bd1").setAttribute("src",
+            "Images/Dice/BlueSide" + defender[0] + ".png");
+        }
+        if (defenders > 1) {
+        document.querySelector(".bd2").setAttribute("src",
+            "Images/Dice/BlueSide" + defender[1] + ".png");
+        }
+
+        // Battle it out?
+        if (attacker[0] > defender[0]) {
+          defenders--;
+        }
+        else {
+          attackers--;
+        }
+
+        if ((attacker.length >= 2) && (defender.length == 2)) {
+          if (attacker[1] > defender[1]) {
+            defenders--;
+          }
+          else {
+            attackers--;
+          }
+        }
+
+        attackerLoss = a - attackers;
+        defenderLoss = d - defenders;
+
+        log = log + a + " attackers: " + attacker + " -" + attackerLoss + "<br>" +
+                    d + " defenders: " + defender + " -" + defenderLoss + "<br><br>";
+
+        //update army
+        if (attackerLoss != 0) {
+        document.querySelector("p.Attackers")
+                              .innerHTML = "Attackers: " + a + "<span class='loss'> -"+ attackerLoss + "</span>";
+        }
+
+        if (defenderLoss != 0) {
+        document.querySelector("p.Defenders")
+                              .innerHTML = "Defenders: " + d + "<span class='loss'> -"+ defenderLoss + "</span>";
+        }
+      }
+
+      function endGame() {
+        if (attackers == 0) {
+          document.querySelector("h1").innerHTML = "Defenders win with " + defenders + " left"
+        }
+        else {
+          document.querySelector("h1").innerHTML = "Attackers win with " + attackers + " left"
+        }
+        document.querySelector("p.Attackers")
+                              .innerHTML = "Attackers: " + attackers;
+
+        document.querySelector("p.Defenders")
+                              .innerHTML = "Defenders: " + defenders;
+        attackers = 0
+        defenders = 0
+        refreshDice();
+        battle.style.display = "none";
+        restartGame.style.display = "block";
+        document.querySelector("p#logModal").innerHTML = log;
+      }
+
+      // Function to roll the dice
+      function rollTheDice() {
+        battle.style.display = "none";
+        i = 0
+        animateDice();
+        document.querySelector("p.Attackers")
+                              .innerHTML = "Attackers: " + attackers;
+
+        document.querySelector("p.Defenders")
+                              .innerHTML = "Defenders: " + defenders;
+        setTimeout(function() {
+          battleRound();
+        }, 1000)
+        setTimeout(function() {
+          refreshDice();
+          if ((attackers > 0) && (defenders > 0))
+            rollTheDice();
+          else {
+            endGame();
+          }
+        }, 4000)
+      }
+    </script>
+
+</body>
+
+</html>
